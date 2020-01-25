@@ -1,4 +1,5 @@
-# Econ 722 - Spring 2020 
+# Econ 722 - Spring 2020
 ## Posterior Samplers: Importance Sampling
+### PS1 - problem 2
 
-Implementation of the importance sampling algorithm assuming a normal N(0,1) posterior density and a student t distribution with 4 degrees of freedom for the importance sampling density.
+It includes the implementation of the importance sampling algorithm, its evaluation under different number of draws from the auxiliary distribution and computation of bias, variance and the inefficiency factor.  
