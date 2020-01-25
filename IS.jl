@@ -3,7 +3,7 @@
 # Econometrics IV, Part 1
 # Prof. Frank Schorfheide
 #
-# Posterior mean
+# Approximated mean
 # -----------------------------------------------------------------------------
 
 module IS
