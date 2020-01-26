@@ -76,7 +76,7 @@ for iDraws in 1:length(N)
 
    # Ineficiency factor
    # h1_InEff = h1_MCvar/( /N[iDraws])
-   # h2_InEff = h2_MCvar/(/N[iDraws])
+   # h2_InEff = h2_MCvar/( /N[iDraws])
 
 
    # 3. Saving results

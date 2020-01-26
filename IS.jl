@@ -15,6 +15,7 @@ export mean_approx
 # ---------
 using Distributions
 using Random
+using SpecialFunctions
 
 # ----------
 # Algorithm
@@ -31,7 +32,16 @@ function mean_approx(h::Function, f::Distribution, g::Distribution, N::Integer)
         θ = rand(g,1)[1]
 
         # Unnormalized weight
-        w = pdf(f,θ)/pdf(g,θ)
+        if typeof(f) == Normal{Float64}
+            Z = (1/sqrt(2*π))
+        elseif typeof(f) == TDist{Float64}
+            ν = dof(f)
+            Z = (gamma((ν+1)/2)/sqrt(ν*π)*gamma(ν/2))
+        else
+            println("I have only computed the normalization constant for the Normal distribution and the Student t distribution. ")
+        end
+
+        w = (pdf(f,θ)/Z) / pdf(g,θ)
 
         return w, θ
     end
