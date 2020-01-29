@@ -10,7 +10,7 @@
 # Packages
 # ---------
 using Distributions
-using Expectations
+using SpecialFunctions
 using Plots, LaTeXStrings
 
 # --------
@@ -34,12 +34,13 @@ h2(x) = x^2
 # ---------
 # Solution
 # ---------
-vH1bias = Float64[]
-vH2bias = Float64[]
+vH1BiasSq = zeros(N_run, length(N))
+vH2BiasSq = similar(vH1BiasSq)
 vH1var = Float64[]
 vH2var = Float64[]
 vH1InEff = Float64[]
 vH2InEff = Float64[]
+vInEff_approx = Float64[]
 
 for iDraws in 1:length(N)
 
@@ -59,35 +60,37 @@ for iDraws in 1:length(N)
    # Notice that θ and W are independent of the choice of h, thus...
    vH2bar = mean(mWeights .* h2.(mTheta), dims=1)
 
-   # 2.2. Results
-   # Mean
-   h1_MCmean = mean(vH1bar)
-   h2_MCmean = mean(vH2bar)
+   # 2.2. Bias
+   E1 = 0.0
+   E2 = ν/(ν-2)
 
-   # Bias
-   E1 = expectation(h1, f)
-   E2 = expectation(h2, f)
-   h1_MCbias = (E1 - h1_MCmean)^2
-   h2_MCbias = (E2 - h2_MCmean)^2
+   h1_MCbias = (vH1bar .- E1).^2
+   h2_MCbias = (vH2bar .- E2).^2
 
-   # Variance
+   # 2.3. Variance
    h1_MCvar = var(vH1bar)
    h2_MCvar = var(vH2bar)
 
-   # Ineficiency factor
-   # h1_InEff = h1_MCvar/( /N[iDraws])
-   # h2_InEff = h2_MCvar/(/N[iDraws])
+   # 2.4. Ineficiency factor
+   # Small sample
+   h1_InEff = h1_MCvar/( ν/(ν-2) / N[iDraws])
+   #h2_InEff = h2_MCvar/(  / N[iDraws])
+
+   # Approximated
+   Z = (gamma((ν+1)/2)/sqrt(ν*π)*gamma(ν/2))
+   InEff_approx = 1 + (Z^(-2)*var(mWeights[iDraws,:]))
 
 
    # 3. Saving results
-   global vH1bias = push!(vH1bias, h1_MCbias)
-   global vH2bias = push!(vH2bias, h2_MCbias)
+   vH1BiasSq[:,iDraws] = h1_MCbias
+   vH2BiasSq[:, iDraws] = h2_MCbias
 
    global vH1var = push!(vH1var, h1_MCvar)
    global vH2var = push!(vH2var, h2_MCvar)
 
-   # global vH1InEff = push!(vH1InEff, h1_InEff)
+   global vH1InEff = push!(vH1InEff, h1_InEff)
    # global vH2InEff = push!(vH2InEff, h2_InEff)
+   global vInEff_approx = push!(vInEff_approx, InEff_approx)
 
    # 4. Graphs
    if N[iDraws] == 100
@@ -109,3 +112,15 @@ for iDraws in 1:length(N)
    end
 
 end
+
+# Mean Sq. Bias
+vH1MeanSqBias = mean(vH1BiasSq, dims=1)
+vH2MeanSqBias = mean(vH2BiasSq, dims=1)
+
+# ------
+# Graphs
+# -------
+pInefficiencyFactorsSwitched = plot(N, vInEff_approx, color=:black, linestyle=:dash, label="")
+plot!(N, vH1InEff, linecolor=:black, linestyle=:solid, marker=:utriangle, markercolor=:white, label="")
+
+savefig(pInefficiencyFactorsSwitched, "/Users/Castesil/Documents/EUI/Year II - PENN/Spring 2020/Econometrics IV/PS/PS1/LaTeX/pInefficiencyFactorsSwitched.pdf"")
