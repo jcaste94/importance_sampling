@@ -122,7 +122,7 @@ for iDraws in 1:length(N)
       # 2. Density functions
       vTheta = sort!(mTheta[:,end])
 
-      pSamplingDensity = plot(vTheta, pdf.(f, vTheta), label = "f", linewidth = 1.5, linestyle=:solid, linecolor=:black, xlabel=L"\theta")
+      pSamplingDensity = plot(vTheta, pdf.(f, vTheta), label = L"\pi", linewidth = 1.5, linestyle=:solid, linecolor=:black, xlabel=L"\theta")
       plot!(vTheta, pdf.(g, vTheta), label = "g", linewidth = 1.5, linestyle=:dash, linecolor=:black)
 
       savefig(pSamplingDensity, "/Users/Castesil/Documents/EUI/Year II - PENN/Spring 2020/Econometrics IV/PS/PS1/LaTeX/pSamplingDensity.pdf")
